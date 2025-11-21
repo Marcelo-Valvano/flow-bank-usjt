@@ -46,13 +46,15 @@ public class TelaExtrato extends javax.swing.JFrame {
         btnFechar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowOpened(java.awt.event.WindowEvent evt) {
+                formWindowOpened(evt);
+            }
+        });
 
         tblExtrato.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
                 "Data", "Hora", "Transação", "Valor"
@@ -104,6 +106,8 @@ public class TelaExtrato extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    
+    
     private void btnAlterarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarActionPerformed
         TelaCadastro telaCadastro = new TelaCadastro(this.idUsuario);
         telaCadastro.setVisible(true);
@@ -113,6 +117,22 @@ public class TelaExtrato extends javax.swing.JFrame {
     private void btnFecharActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFecharActionPerformed
         this.dispose();
     }//GEN-LAST:event_btnFecharActionPerformed
+
+    private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
+        ExtratoDAO extratoDAO = new ExtratoDAO();
+        for (Extrato itemExtrato : extratoDAO.consultarExtrato(this.idUsuario)) {
+            DefaultTableModel model = (DefaultTableModel) tblExtrato.getModel();
+            String formatoData = "dd/MM/yyyy";
+            String formatoHora = "hh:mm";
+            SimpleDateFormat sdfData = new SimpleDateFormat(formatoData);
+            SimpleDateFormat sdfHora = new SimpleDateFormat(formatoHora);
+            String data = sdfData.format(itemExtrato.getData());
+            String hora = sdfHora.format(itemExtrato.getHora());
+            String transacao = itemExtrato.getTransacao();
+            Double valor = itemExtrato.getValor();
+            model.addRow(new Object[]{data, hora, transacao, valor});
+        }
+    }//GEN-LAST:event_formWindowOpened
 
     /**
      * @param args the command line arguments
